@@ -1,0 +1,59 @@
+using System.Xml.Linq;
+using ProjectToFileBasedApp.Models;
+
+namespace ProjectToFileBasedApp;
+
+public sealed class CsprojReader
+{
+    private readonly string csprojPath;
+
+    public CsprojReader(string csprojPath)
+    {
+        if (!File.Exists(csprojPath))
+        {
+            throw new FileNotFoundException($"The project file was not found at: {csprojPath}", csprojPath);
+        }
+
+        this.csprojPath = csprojPath;
+    }
+
+    public ProjectInformation GetProjectInformation()
+    {
+        var doc = XDocument.Load(csprojPath);
+        var ns = doc.Root?.Name.Namespace ?? XNamespace.None;
+
+        var sdkType = doc.Root?.Attribute("Sdk")?.Value ?? string.Empty;
+
+        var properties = new List<ProjectProperty>();
+        var propertyGroups = doc.Descendants(ns + "PropertyGroup");
+        foreach (var propertyGroup in propertyGroups)
+        {
+            foreach (var property in propertyGroup.Elements())
+            {
+                properties.Add(new ProjectProperty(property.Name.LocalName, property.Value));
+            }
+        }
+
+        // In File Based Apps, PublishAot is true by default, so if the source project does not set this property, we set it to false to
+        // ensure the original behavior.
+        if (!properties.Any(p => p.Name == "PublishAot"))
+        {
+            properties.Add(new ProjectProperty("PublishAot", "false"));
+        }
+
+        var packageReferences = new List<PackageReference>();
+        var packageReferenceElements = doc.Descendants(ns + "PackageReference");
+        foreach (var packageReference in packageReferenceElements)
+        {
+            var packageName = packageReference.Attribute("Include")?.Value;
+            var version = packageReference.Attribute("Version")?.Value ?? packageReference.Element(ns + "Version")?.Value;
+
+            if (packageName is not null)
+            {
+                packageReferences.Add(new PackageReference(packageName, version));
+            }
+        }
+
+        return new ProjectInformation(sdkType, properties, packageReferences);
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProjectToFileBasedApp": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Temp\\WebApplication1\\WebApplication1"
+    }
+  }
+}
