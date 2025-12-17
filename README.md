@@ -1,4 +1,4 @@
-# Project To File-Based App
+# Project To File-Based App Converter
 
 A command-line tool that converts traditional C# projects into [File-Based Apps](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/tutorials/file-based-programs), combining project configuration and source code into a single executable file.
 
@@ -40,25 +40,25 @@ ProjectToFileBasedApp [files] [options]
 ### Specify a directory
 
 ```bash
-ProjectToFileBasedApp ./MyProject
+ProjectToFileBasedAppConverter ./MyProject
 ```
 
 ### Specify both files
 
 ```bash
-ProjectToFileBasedApp MyProject.csproj Program.cs
+ProjectToFileBasedAppConverter MyProject.csproj Program.cs
 ```
 
 ### Specify only the C# file
 
 ```bash
-ProjectToFileBasedApp Program.cs
+ProjectToFileBasedAppConverter Program.cs
 ```
 
 ### Specify custom output file
 
 ```bash
-ProjectToFileBasedApp Program.cs --out MyApp.cs
+ProjectToFileBasedAppConverter Program.cs --out MyApp.cs
 ```
 
 ## Output Format

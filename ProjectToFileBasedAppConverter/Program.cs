@@ -1,5 +1,5 @@
 ﻿using System.CommandLine;
-using ProjectToFileBasedApp;
+using ProjectToFileBasedAppConverter;
 
 var filesArgument = new Argument<string[]>("files")
 {

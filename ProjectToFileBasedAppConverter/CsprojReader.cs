@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using ProjectToFileBasedApp.Models;
+using ProjectToFileBasedAppConverter.Models;
 
-namespace ProjectToFileBasedApp;
+namespace ProjectToFileBasedAppConverter;
 
 public sealed class CsprojReader
 {

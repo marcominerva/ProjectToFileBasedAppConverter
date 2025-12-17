@@ -5,5 +5,5 @@
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="ProjectToFileBasedApp/ProjectToFileBasedApp.csproj" />
+  <Project Path="ProjectToFileBasedAppConverter/ProjectToFileBasedAppConverter.csproj" />
 </Solution>

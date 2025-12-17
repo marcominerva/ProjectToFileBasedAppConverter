@@ -1,4 +1,4 @@
-namespace ProjectToFileBasedApp;
+namespace ProjectToFileBasedAppConverter;
 
 public static class FileDiscovery
 {
