@@ -76,7 +76,7 @@ public sealed class CsprojReader
             {
                 var alias = usingElement.Attribute("Alias")?.Value;
                 var isStatic = bool.TryParse(usingElement.Attribute("Static")?.Value, out var staticValue) && staticValue;
-                usingDirectives.Add(new UsingDirective(includeNamespace, alias, isStatic));
+                usingDirectives.Add(new(includeNamespace, alias, isStatic));
             }
         }
 

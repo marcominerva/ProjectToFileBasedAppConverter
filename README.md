@@ -94,7 +94,6 @@ global using System.Collections.Generic;
   - Regular using: `<Using Include="System" />` → `global using System;`
   - Using with alias: `<Using Include="System.Text" Alias="Text" />` → `global using Text = System.Text;`
   - Static using: `<Using Include="System.Math" Static="true" />` → `global using static System.Math;`
-  - Note that `<Using Remove="...">` directives are not included in the output, as they only affect implicit usings
 - If the output file already exists, the tool will display an error and exit without overwriting
 - The tool requires exactly one `.csproj` file and one `.cs` file to be found or specified
 

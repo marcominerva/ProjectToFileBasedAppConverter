@@ -108,10 +108,7 @@ rootCommand.SetAction(result =>
             }
         }
 
-        if (projectInfo.UsingDirectives.Count > 0)
-        {
-            writer.WriteLine();
-        }
+        WriteEmptyLineIf(projectInfo.UsingDirectives.Count > 0, writer);
 
         var sourceContent = File.ReadAllText(sourcePath!);
         writer.Write(sourceContent);
