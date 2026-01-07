@@ -75,7 +75,8 @@ public sealed class CsprojReader
             if (!string.IsNullOrWhiteSpace(includeNamespace))
             {
                 var alias = usingElement.Attribute("Alias")?.Value;
-                usingDirectives.Add(new UsingDirective(includeNamespace, alias));
+                var isStatic = bool.TryParse(usingElement.Attribute("Static")?.Value, out var staticValue) && staticValue;
+                usingDirectives.Add(new UsingDirective(includeNamespace, alias, isStatic));
             }
         }
 

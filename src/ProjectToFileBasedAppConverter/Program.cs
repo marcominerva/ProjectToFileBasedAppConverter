@@ -101,6 +101,10 @@ rootCommand.SetAction(result =>
             {
                 writer.WriteLine($"global using {usingDirective.Alias} = {usingDirective.Namespace};");
             }
+            else if (usingDirective.IsStatic)
+            {
+                writer.WriteLine($"global using static {usingDirective.Namespace};");
+            }
             else
             {
                 writer.WriteLine($"global using {usingDirective.Namespace};");
