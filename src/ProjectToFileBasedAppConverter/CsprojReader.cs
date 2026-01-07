@@ -71,15 +71,11 @@ public sealed class CsprojReader
         foreach (var usingElement in usingElements)
         {
             var includeNamespace = usingElement.Attribute("Include")?.Value;
-            var removeNamespace = usingElement.Attribute("Remove")?.Value;
 
             if (includeNamespace is not null)
             {
-                usingDirectives.Add(new UsingDirective(includeNamespace, IsRemove: false));
-            }
-            else if (removeNamespace is not null)
-            {
-                usingDirectives.Add(new UsingDirective(removeNamespace, IsRemove: true));
+                var alias = usingElement.Attribute("Alias")?.Value;
+                usingDirectives.Add(new UsingDirective(includeNamespace, alias));
             }
         }
 

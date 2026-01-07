@@ -85,13 +85,19 @@ rootCommand.SetAction(result =>
 
         writer.WriteLine();
 
-        var includeDirectives = projectInfo.UsingDirectives.Where(u => !u.IsRemove).ToList();
-        foreach (var usingDirective in includeDirectives)
+        foreach (var usingDirective in projectInfo.UsingDirectives)
         {
-            writer.WriteLine($"global using {usingDirective.Namespace};");
+            if (usingDirective.Alias is not null)
+            {
+                writer.WriteLine($"global using {usingDirective.Alias} = {usingDirective.Namespace};");
+            }
+            else
+            {
+                writer.WriteLine($"global using {usingDirective.Namespace};");
+            }
         }
 
-        if (includeDirectives.Count > 0)
+        if (projectInfo.UsingDirectives.Count > 0)
         {
             writer.WriteLine();
         }
