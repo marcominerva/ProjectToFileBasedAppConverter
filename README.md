@@ -2,6 +2,25 @@
 
 A command-line tool that converts traditional C# projects into [File-Based Apps](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/tutorials/file-based-programs), combining project configuration and source code into a single executable file.
 
+## Installation
+
+This tool can be installed as a global .NET tool:
+
+```bash
+dotnet tool install -g FileBasedConverter
+```
+
+After installation, you can use the tool with the `filebased-convert` command.
+
+## Before Publishing to NuGet
+
+Before publishing this package to the public NuGet feed, please update the following metadata in `ProjectToFileBasedAppConverter.csproj`:
+
+- **Authors**: Replace `YOUR_NAME_HERE` with the actual author name(s)
+- **Copyright**: Update the copyright year and holder if needed (currently set to "Copyright (c) 2026")
+
+These placeholders are marked in the project file and should be completed before running `dotnet pack` for public distribution.
+
 ## Purpose
 
 This tool simplifies the distribution and execution of C# applications by creating self-contained file-based apps. It reads a `.csproj` file and a C# source file, then generates a single `.cs` file that includes:
@@ -17,7 +36,7 @@ The resulting file can be executed directly using the `dotnet` command without r
 ## Usage
 
 ```bash
-ProjectToFileBasedApp [files] [options]
+filebased-convert [files] [options]
 ```
 
 ### Arguments
@@ -41,25 +60,25 @@ ProjectToFileBasedApp [files] [options]
 ### Specify a directory
 
 ```bash
-ProjectToFileBasedAppConverter ./MyProject
+filebased-convert ./MyProject
 ```
 
 ### Specify both files
 
 ```bash
-ProjectToFileBasedAppConverter MyProject.csproj Program.cs
+filebased-convert MyProject.csproj Program.cs
 ```
 
 ### Specify only the C# file
 
 ```bash
-ProjectToFileBasedAppConverter Program.cs
+filebased-convert Program.cs
 ```
 
 ### Specify custom output file
 
 ```bash
-ProjectToFileBasedAppConverter Program.cs --out MyApp.cs
+filebased-convert Program.cs --out MyApp.cs
 ```
 
 ## Output Format
