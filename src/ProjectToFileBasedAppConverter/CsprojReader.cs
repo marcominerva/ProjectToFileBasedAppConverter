@@ -66,6 +66,23 @@ public sealed class CsprojReader
             }
         }
 
-        return new ProjectInformation(sdkType, properties, packageReferences, projectReferences);
+        var usingDirectives = new List<UsingDirective>();
+        var usingElements = doc.Descendants(ns + "Using");
+        foreach (var usingElement in usingElements)
+        {
+            var includeNamespace = usingElement.Attribute("Include")?.Value;
+            var removeNamespace = usingElement.Attribute("Remove")?.Value;
+
+            if (includeNamespace is not null)
+            {
+                usingDirectives.Add(new UsingDirective(includeNamespace, IsRemove: false));
+            }
+            else if (removeNamespace is not null)
+            {
+                usingDirectives.Add(new UsingDirective(removeNamespace, IsRemove: true));
+            }
+        }
+
+        return new ProjectInformation(sdkType, properties, packageReferences, projectReferences, usingDirectives);
     }
 }

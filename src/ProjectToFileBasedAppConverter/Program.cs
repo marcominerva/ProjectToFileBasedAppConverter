@@ -85,6 +85,19 @@ rootCommand.SetAction(result =>
 
         writer.WriteLine();
 
+        foreach (var usingDirective in projectInfo.UsingDirectives)
+        {
+            if (!usingDirective.IsRemove)
+            {
+                writer.WriteLine($"global using {usingDirective.Namespace};");
+            }
+        }
+
+        if (projectInfo.UsingDirectives.Any(u => !u.IsRemove))
+        {
+            writer.WriteLine();
+        }
+
         foreach (var projectReference in projectInfo.ProjectReferences)
         {
             writer.WriteLine($"#:project {projectReference.Path}");
