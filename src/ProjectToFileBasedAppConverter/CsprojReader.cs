@@ -72,7 +72,7 @@ public sealed class CsprojReader
         {
             var includeNamespace = usingElement.Attribute("Include")?.Value;
 
-            if (includeNamespace is not null)
+            if (!string.IsNullOrWhiteSpace(includeNamespace))
             {
                 var alias = usingElement.Attribute("Alias")?.Value;
                 usingDirectives.Add(new UsingDirective(includeNamespace, alias));

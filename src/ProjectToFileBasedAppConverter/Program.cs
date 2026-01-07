@@ -87,7 +87,7 @@ rootCommand.SetAction(result =>
 
         foreach (var usingDirective in projectInfo.UsingDirectives)
         {
-            if (usingDirective.Alias is not null)
+            if (!string.IsNullOrWhiteSpace(usingDirective.Alias))
             {
                 writer.WriteLine($"global using {usingDirective.Alias} = {usingDirective.Namespace};");
             }
