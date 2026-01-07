@@ -85,6 +85,16 @@ rootCommand.SetAction(result =>
 
         writer.WriteLine();
 
+        foreach (var projectReference in projectInfo.ProjectReferences)
+        {
+            writer.WriteLine($"#:project {projectReference.Path}");
+        }
+
+        if (projectInfo.ProjectReferences.Count > 0)
+        {
+            writer.WriteLine();
+        }
+
         foreach (var usingDirective in projectInfo.UsingDirectives)
         {
             if (!string.IsNullOrWhiteSpace(usingDirective.Alias))
@@ -98,16 +108,6 @@ rootCommand.SetAction(result =>
         }
 
         if (projectInfo.UsingDirectives.Count > 0)
-        {
-            writer.WriteLine();
-        }
-
-        foreach (var projectReference in projectInfo.ProjectReferences)
-        {
-            writer.WriteLine($"#:project {projectReference.Path}");
-        }
-
-        if (projectInfo.ProjectReferences.Count > 0)
         {
             writer.WriteLine();
         }
