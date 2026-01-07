@@ -77,11 +77,11 @@ The generated file-based app includes:
 #:package PackageName@Version
 #:package AnotherPackage@AnotherVersion
 
-global using System.Text;
-global using System.Collections.Generic;
-
 #:project ../ReferencedProject/ReferencedProject.csproj
 #:project ../AnotherProject/AnotherProject.csproj
+
+global using System.Text;
+global using System.Collections.Generic;
 
 // Original C# source code follows...
 ```
