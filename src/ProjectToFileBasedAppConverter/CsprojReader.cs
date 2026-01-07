@@ -30,7 +30,7 @@ public sealed class CsprojReader
         {
             foreach (var property in propertyGroup.Elements())
             {
-                properties.Add(new ProjectProperty(property.Name.LocalName, property.Value));
+                properties.Add(new(property.Name.LocalName, property.Value));
             }
         }
 
@@ -38,7 +38,7 @@ public sealed class CsprojReader
         // ensure the original behavior.
         if (!properties.Any(p => p.Name == "PublishAot"))
         {
-            properties.Add(new ProjectProperty("PublishAot", "false"));
+            properties.Add(new("PublishAot", "false"));
         }
 
         var packageReferences = new List<PackageReference>();
@@ -50,7 +50,7 @@ public sealed class CsprojReader
 
             if (packageName is not null)
             {
-                packageReferences.Add(new PackageReference(packageName, version));
+                packageReferences.Add(new(packageName, version));
             }
         }
 
@@ -62,7 +62,7 @@ public sealed class CsprojReader
 
             if (projectPath is not null)
             {
-                projectReferences.Add(new ProjectReference(projectPath));
+                projectReferences.Add(new(projectPath));
             }
         }
 

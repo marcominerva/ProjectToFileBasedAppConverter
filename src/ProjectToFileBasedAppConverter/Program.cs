@@ -37,11 +37,11 @@ rootCommand.SetAction(result =>
         return;
     }
 
-    // Handle output file path
+    // Handle output file path.
     string? finalOutputPath = null;
     if (outputPath is not null)
     {
-        // If -out was provided, check if it already exists
+        // If -out was provided, check if it already exists.
         if (File.Exists(outputPath))
         {
             Console.WriteLine($"Error: Output file already exists: {outputPath}");
@@ -52,7 +52,7 @@ rootCommand.SetAction(result =>
     }
     else if (sourcePath is not null)
     {
-        // If -out was not provided, automatically generate the name
+        // If -out was not provided, automatically generate the name.
         var directory = Path.GetDirectoryName(sourcePath) ?? ".";
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(sourcePath);
         finalOutputPath = Path.Combine(directory, $"{fileNameWithoutExtension}_FileBased.cs");
@@ -76,24 +76,21 @@ rootCommand.SetAction(result =>
             writer.WriteLine($"#:property {property.Name}={property.Value}");
         }
 
-        writer.WriteLine();
+        WriteEmptyLineIf(projectInfo.Properties.Count > 0, writer);
 
         foreach (var packageReference in projectInfo.PackageReferences)
         {
             writer.WriteLine($"#:package {packageReference.Name}@{packageReference.Version}");
         }
 
-        writer.WriteLine();
+        WriteEmptyLineIf(projectInfo.PackageReferences.Count > 0, writer);
 
         foreach (var projectReference in projectInfo.ProjectReferences)
         {
             writer.WriteLine($"#:project {projectReference.Path}");
         }
 
-        if (projectInfo.ProjectReferences.Count > 0)
-        {
-            writer.WriteLine();
-        }
+        WriteEmptyLineIf(projectInfo.ProjectReferences.Count > 0, writer);
 
         var sourceContent = File.ReadAllText(sourcePath!);
         writer.Write(sourceContent);
@@ -105,3 +102,11 @@ rootCommand.SetAction(result =>
 });
 
 return rootCommand.Parse(args).Invoke();
+
+static void WriteEmptyLineIf(bool condition, StreamWriter writer)
+{
+    if (condition)
+    {
+        writer.WriteLine();
+    }
+}
