@@ -9,6 +9,7 @@ This tool simplifies the distribution and execution of C# applications by creati
 - The project SDK information
 - Project properties
 - Package references
+- Project references (references to other projects in the solution)
 - The original source code
 
 The resulting file can be executed directly using the `dotnet` command without requiring a separate project file.
@@ -76,12 +77,16 @@ The generated file-based app includes:
 #:package PackageName@Version
 #:package AnotherPackage@AnotherVersion
 
+#:project ../ReferencedProject/ReferencedProject.csproj
+#:project ../AnotherProject/AnotherProject.csproj
+
 // Original C# source code follows...
 ```
 
 ## Notes
 
 - The tool automatically adds `PublishAot=false` if not already present in the project properties. This is necessary because File-Based Apps have `PublishAot=true` by default, and adding this property explicitly ensures the original project behavior is maintained
+- Project references (`<ProjectReference>` elements in the `.csproj`) are converted to `#:project` directives with their relative paths preserved
 - If the output file already exists, the tool will display an error and exit without overwriting
 - The tool requires exactly one `.csproj` file and one `.cs` file to be found or specified
 

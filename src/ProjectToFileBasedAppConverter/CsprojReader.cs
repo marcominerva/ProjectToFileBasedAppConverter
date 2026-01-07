@@ -54,6 +54,18 @@ public sealed class CsprojReader
             }
         }
 
-        return new ProjectInformation(sdkType, properties, packageReferences);
+        var projectReferences = new List<ProjectReference>();
+        var projectReferenceElements = doc.Descendants(ns + "ProjectReference");
+        foreach (var projectReference in projectReferenceElements)
+        {
+            var projectPath = projectReference.Attribute("Include")?.Value;
+
+            if (projectPath is not null)
+            {
+                projectReferences.Add(new ProjectReference(projectPath));
+            }
+        }
+
+        return new ProjectInformation(sdkType, properties, packageReferences, projectReferences);
     }
 }
