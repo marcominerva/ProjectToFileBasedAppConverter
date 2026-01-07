@@ -92,6 +92,27 @@ rootCommand.SetAction(result =>
 
         WriteEmptyLineIf(projectInfo.ProjectReferences.Count > 0, writer);
 
+        foreach (var usingDirective in projectInfo.UsingDirectives)
+        {
+            if (!string.IsNullOrWhiteSpace(usingDirective.Alias))
+            {
+                writer.WriteLine($"global using {usingDirective.Alias} = {usingDirective.Namespace};");
+            }
+            else if (usingDirective.IsStatic)
+            {
+                writer.WriteLine($"global using static {usingDirective.Namespace};");
+            }
+            else
+            {
+                writer.WriteLine($"global using {usingDirective.Namespace};");
+            }
+        }
+
+        if (projectInfo.UsingDirectives.Count > 0)
+        {
+            writer.WriteLine();
+        }
+
         var sourceContent = File.ReadAllText(sourcePath!);
         writer.Write(sourceContent);
     }

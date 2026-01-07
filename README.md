@@ -80,6 +80,9 @@ The generated file-based app includes:
 #:project ../ReferencedProject/ReferencedProject.csproj
 #:project ../AnotherProject/AnotherProject.csproj
 
+global using System.Text;
+global using System.Collections.Generic;
+
 // Original C# source code follows...
 ```
 
@@ -87,6 +90,11 @@ The generated file-based app includes:
 
 - The tool automatically adds `PublishAot=false` if not already present in the project properties. This is necessary because File-Based Apps have `PublishAot=true` by default, and adding this property explicitly ensures the original project behavior is maintained
 - Project references (`<ProjectReference>` elements in the `.csproj`) are converted to `#:project` directives with their relative paths preserved
+- Global using directives (`<Using Include="...">` elements in the `.csproj`) are converted to `global using` statements in the generated file:
+  - Regular using: `<Using Include="System" />` → `global using System;`
+  - Using with alias: `<Using Include="System.Text" Alias="Text" />` → `global using Text = System.Text;`
+  - Static using: `<Using Include="System.Math" Static="true" />` → `global using static System.Math;`
+  - Note that `<Using Remove="...">` directives are not included in the output, as they only affect implicit usings
 - If the output file already exists, the tool will display an error and exit without overwriting
 - The tool requires exactly one `.csproj` file and one `.cs` file to be found or specified
 
