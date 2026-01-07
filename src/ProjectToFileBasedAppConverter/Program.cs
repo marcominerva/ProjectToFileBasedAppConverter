@@ -85,6 +85,16 @@ rootCommand.SetAction(result =>
 
         writer.WriteLine();
 
+        foreach (var projectReference in projectInfo.ProjectReferences)
+        {
+            writer.WriteLine($"#:project {projectReference.Path}");
+        }
+
+        if (projectInfo.ProjectReferences.Count > 0)
+        {
+            writer.WriteLine();
+        }
+
         var sourceContent = File.ReadAllText(sourcePath!);
         writer.Write(sourceContent);
     }
