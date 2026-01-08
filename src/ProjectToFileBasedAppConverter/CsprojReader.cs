@@ -8,6 +8,9 @@ namespace ProjectToFileBasedAppConverter;
 /// </summary>
 public sealed class CsprojReader
 {
+    /// <summary>
+    /// The full path to the .csproj file being read.
+    /// </summary>
     private readonly string csprojPath;
 
     /// <summary>
