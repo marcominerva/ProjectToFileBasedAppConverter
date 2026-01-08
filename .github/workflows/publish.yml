@@ -1,4 +1,4 @@
-name: Publish ProjectToFileBasedAppConverter on NuGet
+name: Publish on NuGet
 
 permissions:
   contents: write
