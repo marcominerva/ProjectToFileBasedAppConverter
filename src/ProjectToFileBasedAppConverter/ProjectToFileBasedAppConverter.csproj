@@ -23,6 +23,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>Toolbox.png</PackageIcon>
+        <Copyright>Marco Minerva</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
