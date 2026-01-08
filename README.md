@@ -2,24 +2,27 @@
 
 A command-line tool that converts traditional C# projects into [File-Based Apps](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/tutorials/file-based-programs), combining project configuration and source code into a single executable file.
 
-## Installation
+## Installation and Usage
 
-This tool can be installed as a global .NET tool:
+### Run without installation (recommended)
+
+You can run the tool directly without installing it using `dotnet tool execute` (or the shorthand `dnx`):
+
+```bash
+dnx FileBasedConverter [files] [options]
+```
+
+This is the recommended approach as it doesn't require permanent installation and always uses the latest version available.
+
+### Install as a global tool
+
+Alternatively, you can install the tool as a global .NET tool:
 
 ```bash
 dotnet tool install -g FileBasedConverter
 ```
 
 After installation, you can use the tool with the `filebased-convert` command.
-
-## Before Publishing to NuGet
-
-Before publishing this package to the public NuGet feed, please update the following metadata in `ProjectToFileBasedAppConverter.csproj`:
-
-- **Authors**: Replace `YOUR_NAME_HERE` with the actual author name(s)
-- **Copyright**: Update the copyright year and holder if needed (currently set to "Copyright (c) 2026")
-
-These placeholders are marked in the project file and should be completed before running `dotnet pack` for public distribution.
 
 ## Purpose
 
@@ -33,7 +36,15 @@ This tool simplifies the distribution and execution of C# applications by creati
 
 The resulting file can be executed directly using the `dotnet` command without requiring a separate project file.
 
-## Usage
+## Command Reference
+
+### When using dnx (no installation required)
+
+```bash
+dnx FileBasedConverter [files] [options]
+```
+
+### When installed as a global tool
 
 ```bash
 filebased-convert [files] [options]
@@ -57,26 +68,46 @@ filebased-convert [files] [options]
 
 ## Examples
 
-### Specify a directory
+### Using dnx (without installation)
 
+Specify a directory:
+```bash
+dnx FileBasedConverter ./MyProject
+```
+
+Specify both files:
+```bash
+dnx FileBasedConverter MyProject.csproj Program.cs
+```
+
+Specify only the C# file:
+```bash
+dnx FileBasedConverter Program.cs
+```
+
+Specify custom output file:
+```bash
+dnx FileBasedConverter Program.cs --out MyApp.cs
+```
+
+### Using installed global tool
+
+Specify a directory:
 ```bash
 filebased-convert ./MyProject
 ```
 
-### Specify both files
-
+Specify both files:
 ```bash
 filebased-convert MyProject.csproj Program.cs
 ```
 
-### Specify only the C# file
-
+Specify only the C# file:
 ```bash
 filebased-convert Program.cs
 ```
 
-### Specify custom output file
-
+Specify custom output file:
 ```bash
 filebased-convert Program.cs --out MyApp.cs
 ```
