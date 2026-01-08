@@ -3,10 +3,18 @@ using ProjectToFileBasedAppConverter.Models;
 
 namespace ProjectToFileBasedAppConverter;
 
+/// <summary>
+/// Provides functionality to read and parse C# project files (.csproj) and extract project information.
+/// </summary>
 public sealed class CsprojReader
 {
     private readonly string csprojPath;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CsprojReader"/> class for the specified project file.
+    /// </summary>
+    /// <param name="csprojPath">The full path to the .csproj file to read.</param>
+    /// <exception cref="FileNotFoundException">Thrown when the specified project file does not exist.</exception>
     public CsprojReader(string csprojPath)
     {
         if (!File.Exists(csprojPath))
@@ -17,6 +25,14 @@ public sealed class CsprojReader
         this.csprojPath = csprojPath;
     }
 
+    /// <summary>
+    /// Extracts and returns comprehensive information from the project file, including SDK type, properties, package references, project references, and global using directives.
+    /// </summary>
+    /// <returns>A <see cref="ProjectInformation"/> object containing all extracted project details.</returns>
+    /// <remarks>
+    /// This method ensures that the <c>PublishAot</c> property is set to <see langword="false"/> if it is not explicitly defined in the project file,
+    /// to maintain compatibility with the original project behavior when converting to a file-based app.
+    /// </remarks>
     public ProjectInformation GetProjectInformation()
     {
         var doc = XDocument.Load(csprojPath);

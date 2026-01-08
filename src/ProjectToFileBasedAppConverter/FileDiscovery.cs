@@ -1,7 +1,31 @@
 namespace ProjectToFileBasedAppConverter;
 
+/// <summary>
+/// Provides functionality to discover and locate C# project files (.csproj) and C# source files (.cs) based on command-line arguments or directory scanning.
+/// </summary>
 public static class FileDiscovery
 {
+    /// <summary>
+    /// Discovers the paths to a .csproj file and a .cs source file based on the provided command-line arguments.
+    /// </summary>
+    /// <param name="args">
+    /// The command-line arguments array. Can be:
+    /// <list type="bullet">
+    /// <item><see langword="null"/> or empty: searches the current directory for files.</item>
+    /// <item>One argument: can be a directory path, a .csproj file path, or a .cs file path.</item>
+    /// <item>Two arguments: expects both a .csproj file path and a .cs file path (order-independent).</item>
+    /// </list>
+    /// </param>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item><c>csprojPath</c>: The full path to the discovered .csproj file, or <see langword="null"/> if not found.</item>
+    /// <item><c>sourcePath</c>: The full path to the discovered .cs file, or <see langword="null"/> if not found.</item>
+    /// </list>
+    /// </returns>
+    /// <remarks>
+    /// When searching directories, the method only succeeds if exactly one .csproj file and exactly one .cs file are found in the specified directory.
+    /// </remarks>
     public static (string? csprojPath, string? sourcePath) DiscoverFiles(string[]? args)
     {
         string? csprojPath = null;
@@ -63,6 +87,13 @@ public static class FileDiscovery
         return (csprojPath, sourcePath);
     }
 
+    /// <summary>
+    /// Searches the specified directory for a single .csproj file and a single .cs file.
+    /// </summary>
+    /// <param name="directory">The directory path to search.</param>
+    /// <returns>
+    /// A tuple containing the full paths to the discovered .csproj and .cs files, or <see langword="null"/> for each if not found or if multiple files exist.
+    /// </returns>
     private static (string? csprojPath, string? sourcePath) FindFilesInDirectory(string directory)
     {
         var csprojPath = FindCsprojFile(directory);
@@ -70,12 +101,22 @@ public static class FileDiscovery
         return (csprojPath, sourcePath);
     }
 
+    /// <summary>
+    /// Searches for a single .csproj file in the specified directory.
+    /// </summary>
+    /// <param name="directory">The directory path to search.</param>
+    /// <returns>The full path to the .csproj file if exactly one is found; otherwise, <see langword="null"/>.</returns>
     private static string? FindCsprojFile(string directory)
     {
         var csprojFiles = Directory.GetFiles(directory, "*.csproj");
         return csprojFiles.Length == 1 ? Path.GetFullPath(csprojFiles[0]) : null;
     }
 
+    /// <summary>
+    /// Searches for a single .cs file in the specified directory.
+    /// </summary>
+    /// <param name="directory">The directory path to search.</param>
+    /// <returns>The full path to the .cs file if exactly one is found; otherwise, <see langword="null"/>.</returns>
     private static string? FindCsFile(string directory)
     {
         var csFiles = Directory.GetFiles(directory, "*.cs");
