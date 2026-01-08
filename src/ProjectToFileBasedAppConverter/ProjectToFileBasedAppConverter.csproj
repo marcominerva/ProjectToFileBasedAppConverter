@@ -5,14 +5,15 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
-        <!-- .NET Tool Configuration -->
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+        <DebugType>embedded</DebugType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>filebased-convert</ToolCommandName>
-
-        <!-- NuGet Package Metadata -->
         <PackageId>FileBasedConverter</PackageId>
-        <Authors>YOUR_NAME_HERE</Authors>
+        <Authors>Marco Minerva</Authors>
+        <Company>Marco Minerva</Company>
         <Title>File-Based App Converter Tool</Title>
         <Description>A command-line tool that converts traditional C# projects into File-Based Apps, combining project configuration and source code into a single executable file.</Description>
         <PackageTags>dotnet-tool;csharp;file-based;converter;tool</PackageTags>
@@ -21,14 +22,19 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Copyright>Copyright (c) 2026</Copyright>
+        <PackageIcon>Toolbox.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\Toolbox.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.9.50">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="System.CommandLine" Version="2.0.1" />
     </ItemGroup>
 
