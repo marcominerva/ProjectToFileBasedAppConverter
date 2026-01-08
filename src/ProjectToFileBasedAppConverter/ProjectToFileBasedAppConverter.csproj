@@ -5,7 +5,28 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <!-- .NET Tool Configuration -->
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>filebased-convert</ToolCommandName>
+
+        <!-- NuGet Package Metadata -->
+        <PackageId>FileBasedConverter</PackageId>
+        <Authors>YOUR_NAME_HERE</Authors>
+        <Title>File-Based App Converter Tool</Title>
+        <Description>A command-line tool that converts traditional C# projects into File-Based Apps, combining project configuration and source code into a single executable file.</Description>
+        <PackageTags>dotnet-tool;csharp;file-based;converter;tool</PackageTags>
+        <PackageProjectUrl>https://github.com/marcominerva/ProjectToFileBasedAppConverter</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/marcominerva/ProjectToFileBasedAppConverter</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Copyright>Copyright (c) 2026</Copyright>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.CommandLine" Version="2.0.1" />
