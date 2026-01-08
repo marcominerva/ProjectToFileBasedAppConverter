@@ -4,9 +4,6 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches: [ master ]
-    paths: [ 'src/ProjectToFileBasedAppConverter/**' ]
   workflow_dispatch:
 
 env:
