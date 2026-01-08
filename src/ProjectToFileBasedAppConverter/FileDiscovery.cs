@@ -25,6 +25,7 @@ public static class FileDiscovery
     /// </returns>
     /// <remarks>
     /// When searching directories, the method only succeeds if exactly one .csproj file and exactly one .cs file are found in the specified directory.
+    /// If multiple files of the same type are found, <see langword="null"/> is returned for that file type.
     /// </remarks>
     public static (string? csprojPath, string? sourcePath) DiscoverFiles(string[]? args)
     {
