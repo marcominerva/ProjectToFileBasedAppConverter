@@ -1,7 +1,32 @@
 namespace ProjectToFileBasedAppConverter;
 
+/// <summary>
+/// Provides functionality to discover and locate C# project files (.csproj) and C# source files (.cs) based on command-line arguments or directory scanning.
+/// </summary>
 public static class FileDiscovery
 {
+    /// <summary>
+    /// Discovers the paths to a .csproj file and a .cs source file based on the provided command-line arguments.
+    /// </summary>
+    /// <param name="args">
+    /// The command-line arguments array. Can be:
+    /// <list type="bullet">
+    /// <item><see langword="null"/> or empty: searches the current directory for files.</item>
+    /// <item>One argument: can be a directory path, a .csproj file path, or a .cs file path.</item>
+    /// <item>Two arguments: expects both a .csproj file path and a .cs file path (order-independent).</item>
+    /// </list>
+    /// </param>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item><c>csprojPath</c>: The full path to the discovered .csproj file, or <see langword="null"/> if not found.</item>
+    /// <item><c>sourcePath</c>: The full path to the discovered .cs file, or <see langword="null"/> if not found.</item>
+    /// </list>
+    /// </returns>
+    /// <remarks>
+    /// When searching directories, the method only succeeds if exactly one .csproj file and exactly one .cs file are found in the specified directory.
+    /// If multiple files of the same type are found, <see langword="null"/> is returned for that file type.
+    /// </remarks>
     public static (string? csprojPath, string? sourcePath) DiscoverFiles(string[]? args)
     {
         string? csprojPath = null;
