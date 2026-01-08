@@ -2,8 +2,6 @@ name: Publish ProjectToFileBasedAppConverter on NuGet
 
 permissions:
   contents: write
-  packages: write
-  actions: write
 
 on:
   push:
