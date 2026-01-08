@@ -1,4 +1,4 @@
-name: Publish Tiny .NET Helpers on NuGet
+name: Publish ProjectToFileBasedAppConverter on NuGet
 
 permissions:
   contents: read
