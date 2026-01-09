@@ -12,7 +12,7 @@ var outOption = new Option<string?>("--out", "-o")
     Description = "Optional output file path for the generated file-based app. If not provided, a file with the same name as the C# file ending with '_FileBased.cs' will be created."
 };
 
-var rootCommand = new RootCommand("Reads CSPROJ and CS files information")
+var rootCommand = new RootCommand("Converts traditional C# projects into File-Based Apps by combining project configuration and source code into a single executable file")
 {
     filesArgument,
     outOption
