@@ -29,7 +29,7 @@ var rootCommand = new RootCommand("""
 };
 
 // Customize the help option to remove the "Usage:" section
-var helpOption = rootCommand.Options.FirstOrDefault(o => o is HelpOption) as HelpOption;
+var helpOption = rootCommand.Options.OfType<HelpOption>().FirstOrDefault();
 if (helpOption is not null)
 {
     helpOption.Action = new CustomHelpAction();
@@ -192,9 +192,9 @@ file sealed class CustomHelpAction : SynchronousCommandLineAction
             foreach (var opt in regularOptions)
             {
                 // Get all aliases (including the name)
-                var allAliases = new List<string> { opt.Name };
-                allAliases.AddRange(opt.Aliases.Where(a => a != opt.Name));
-                var aliases = string.Join(", ", allAliases.OrderBy(a => a.Length));
+                var aliases = string.Join(", ", new[] { opt.Name }
+                    .Concat(opt.Aliases.Where(a => a != opt.Name))
+                    .OrderBy(a => a.Length));
 
                 // Determine the help name (parameter name for the option)
                 var helpName = "";
@@ -212,9 +212,22 @@ file sealed class CustomHelpAction : SynchronousCommandLineAction
                 Console.WriteLine($"  {aliases}{helpName}  {opt.Description}");
             }
             
-            // Manually add help and version options at the end
-            Console.WriteLine("  -?, -h, --help   Show help and usage information");
-            Console.WriteLine("  --version        Show version information");
+            // Add help option
+            var helpOpt = command.Options.OfType<HelpOption>().FirstOrDefault();
+            if (helpOpt is not null)
+            {
+                var helpAliases = string.Join(", ", new[] { helpOpt.Name }
+                    .Concat(helpOpt.Aliases.Where(a => a != helpOpt.Name))
+                    .OrderBy(a => a.Length));
+                Console.WriteLine($"  {helpAliases}   Show help and usage information");
+            }
+            
+            // Add version option
+            var versionOpt = command.Options.OfType<VersionOption>().FirstOrDefault();
+            if (versionOpt is not null)
+            {
+                Console.WriteLine($"  {versionOpt.Name}        Show version information");
+            }
         }
 
         return 0;
