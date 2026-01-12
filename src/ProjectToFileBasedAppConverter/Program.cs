@@ -1,4 +1,7 @@
 ﻿using System.CommandLine;
+using System.CommandLine.Help;
+using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 using ProjectToFileBasedAppConverter;
 
 var filesArgument = new Argument<string[]>("files")
@@ -24,6 +27,13 @@ var rootCommand = new RootCommand("""
     filesArgument,
     outOption
 };
+
+// Customize the help option to remove the "Usage:" section
+var helpOption = rootCommand.Options.FirstOrDefault(o => o is HelpOption) as HelpOption;
+if (helpOption is not null)
+{
+    helpOption.Action = new CustomHelpAction();
+}
 
 rootCommand.SetAction(result =>
 {
@@ -133,5 +143,80 @@ static void WriteEmptyLineIf(bool condition, StreamWriter writer)
     if (condition)
     {
         writer.WriteLine();
+    }
+}
+
+/// <summary>
+/// Custom help action that displays help information without the "Usage:" section.
+/// </summary>
+file sealed class CustomHelpAction : SynchronousCommandLineAction
+{
+    public override int Invoke(ParseResult parseResult)
+    {
+        var command = parseResult.CommandResult.Command;
+
+        // Print description (preserving formatting)
+        if (!string.IsNullOrWhiteSpace(command.Description))
+        {
+            Console.WriteLine("Description:");
+            var lines = command.Description.Split('\n');
+            foreach (var line in lines)
+            {
+                Console.WriteLine($"  {line}");
+            }
+
+            Console.WriteLine();
+        }
+
+        // Print arguments
+        if (command.Arguments.Count > 0)
+        {
+            Console.WriteLine("Arguments:");
+            foreach (var arg in command.Arguments)
+            {
+                Console.WriteLine($"  <{arg.Name}>  {arg.Description}");
+            }
+
+            Console.WriteLine();
+        }
+
+        // Print options (excluding help and version options to manually control their display)
+        var regularOptions = command.Options
+            .Where(o => o is not HelpOption && o is not VersionOption)
+            .ToList();
+
+        if (regularOptions.Count > 0 || command.Options.Any(o => o is HelpOption))
+        {
+            Console.WriteLine("Options:");
+            
+            foreach (var opt in regularOptions)
+            {
+                // Get all aliases (including the name)
+                var allAliases = new List<string> { opt.Name };
+                allAliases.AddRange(opt.Aliases.Where(a => a != opt.Name));
+                var aliases = string.Join(", ", allAliases.OrderBy(a => a.Length));
+
+                // Determine the help name (parameter name for the option)
+                var helpName = "";
+                if (!string.IsNullOrEmpty(opt.HelpName))
+                {
+                    helpName = $" <{opt.HelpName}>";
+                }
+                else if (opt.ValueType != typeof(bool))
+                {
+                    // For non-boolean options, show a placeholder based on the option name
+                    var placeholder = opt.Name.TrimStart('-');
+                    helpName = $" <{placeholder}>";
+                }
+
+                Console.WriteLine($"  {aliases}{helpName}  {opt.Description}");
+            }
+            
+            // Manually add help and version options at the end
+            Console.WriteLine("  -?, -h, --help   Show help and usage information");
+            Console.WriteLine("  --version        Show version information");
+        }
+
+        return 0;
     }
 }
