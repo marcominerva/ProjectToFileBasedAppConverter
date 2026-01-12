@@ -1,4 +1,4 @@
-namespace ProjectToFileBasedAppConverter;
+namespace ProjectToFileBasedAppConverter.Utilities;
 
 /// <summary>
 /// Provides functionality to discover and locate C# project files (.csproj) and C# source files (.cs) based on command-line arguments or directory scanning.

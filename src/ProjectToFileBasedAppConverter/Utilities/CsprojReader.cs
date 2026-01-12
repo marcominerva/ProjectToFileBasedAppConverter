@@ -1,7 +1,7 @@
 using System.Xml.Linq;
 using ProjectToFileBasedAppConverter.Models;
 
-namespace ProjectToFileBasedAppConverter;
+namespace ProjectToFileBasedAppConverter.Utilities;
 
 /// <summary>
 /// Provides functionality to read and parse C# project files (.csproj) and extract project information.
