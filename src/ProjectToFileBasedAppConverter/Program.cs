@@ -1,4 +1,7 @@
 ﻿using System.CommandLine;
+using System.CommandLine.Help;
+using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 using ProjectToFileBasedAppConverter;
 
 var filesArgument = new Argument<string[]>("files")
@@ -12,11 +15,25 @@ var outOption = new Option<string?>("--out", "-o")
     Description = "Optional output file path for the generated file-based app. If not provided, a file with the same name as the C# file ending with '_FileBased.cs' will be created."
 };
 
-var rootCommand = new RootCommand("Reads CSPROJ and CS files information")
+var rootCommand = new RootCommand("""
+    Converts traditional C# projects into File-Based Apps by combining project configuration and source code into a single executable file
+
+    Examples:
+      dnx FileBasedConverter ./MyProject
+      dnx FileBasedConverter MyProject.csproj Program.cs
+      dnx FileBasedConverter Program.cs --out MyApp.cs
+    """)
 {
     filesArgument,
     outOption
 };
+
+// Customize the help option to remove the "Usage:" section
+var helpOption = rootCommand.Options.OfType<HelpOption>().FirstOrDefault();
+if (helpOption is not null)
+{
+    helpOption.Action = new CustomHelpAction();
+}
 
 rootCommand.SetAction(result =>
 {
@@ -126,5 +143,93 @@ static void WriteEmptyLineIf(bool condition, StreamWriter writer)
     if (condition)
     {
         writer.WriteLine();
+    }
+}
+
+/// <summary>
+/// Custom help action that displays help information without the "Usage:" section.
+/// </summary>
+file sealed class CustomHelpAction : SynchronousCommandLineAction
+{
+    public override int Invoke(ParseResult parseResult)
+    {
+        var command = parseResult.CommandResult.Command;
+
+        // Print description (preserving formatting)
+        if (!string.IsNullOrWhiteSpace(command.Description))
+        {
+            Console.WriteLine("Description:");
+            var lines = command.Description.Split('\n');
+            foreach (var line in lines)
+            {
+                Console.WriteLine($"  {line}");
+            }
+
+            Console.WriteLine();
+        }
+
+        // Print arguments
+        if (command.Arguments.Count > 0)
+        {
+            Console.WriteLine("Arguments:");
+            foreach (var arg in command.Arguments)
+            {
+                Console.WriteLine($"  <{arg.Name}>  {arg.Description}");
+            }
+
+            Console.WriteLine();
+        }
+
+        // Print options (excluding help and version options to manually control their display)
+        var regularOptions = command.Options
+            .Where(o => o is not HelpOption && o is not VersionOption)
+            .ToList();
+
+        if (regularOptions.Count > 0 || command.Options.Any(o => o is HelpOption))
+        {
+            Console.WriteLine("Options:");
+            
+            foreach (var opt in regularOptions)
+            {
+                // Get all aliases (including the name)
+                var aliases = string.Join(", ", new[] { opt.Name }
+                    .Concat(opt.Aliases.Where(a => a != opt.Name))
+                    .OrderBy(a => a.Length));
+
+                // Determine the help name (parameter name for the option)
+                var helpName = "";
+                if (!string.IsNullOrEmpty(opt.HelpName))
+                {
+                    helpName = $" <{opt.HelpName}>";
+                }
+                else if (opt.ValueType != typeof(bool))
+                {
+                    // For non-boolean options, show a placeholder based on the option name
+                    var placeholder = opt.Name.TrimStart('-');
+                    helpName = $" <{placeholder}>";
+                }
+
+                Console.WriteLine($"  {aliases}{helpName}  {opt.Description}");
+            }
+            
+            // Add help option
+            var helpOpt = command.Options.OfType<HelpOption>().FirstOrDefault();
+            if (helpOpt is not null)
+            {
+                var helpAliases = string.Join(", ", new[] { helpOpt.Name }
+                    .Concat(helpOpt.Aliases.Where(a => a != helpOpt.Name))
+                    .OrderBy(a => a.Length));
+                Console.WriteLine($"  {helpAliases}   Show help and usage information");
+            }
+            
+            // Add version option
+            var versionOpt = command.Options.OfType<VersionOption>().FirstOrDefault();
+            if (versionOpt is not null)
+            {
+                Console.WriteLine($"  {versionOpt.Name}        Show version information");
+            }
+        }
+
+        return 0;
     }
 }
