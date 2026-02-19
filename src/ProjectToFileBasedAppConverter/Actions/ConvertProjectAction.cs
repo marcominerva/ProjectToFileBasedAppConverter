@@ -7,14 +7,14 @@ namespace ProjectToFileBasedAppConverter.Actions;
 /// <summary>
 /// Action that converts a traditional C# project into a file-based app.
 /// </summary>
-sealed class ConvertProjectAction(Argument<string[]> filesArgument, Option<string?> outOption) : SynchronousCommandLineAction
+internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Option<string?> outOption) : AsynchronousCommandLineAction
 {
-    public override int Invoke(ParseResult parseResult)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
         var files = parseResult.GetValue(filesArgument) ?? [];
         var outputPath = parseResult.GetValue(outOption);
 
-        var (csprojPath, sourcePath) = FileDiscovery.DiscoverFiles(files);
+        var (csprojPath, csSourcePath) = FileDiscovery.DiscoverFiles(files);
 
         if (csprojPath is null)
         {
@@ -22,7 +22,7 @@ sealed class ConvertProjectAction(Argument<string[]> filesArgument, Option<strin
             return 1;
         }
 
-        if (sourcePath is null)
+        if (csSourcePath is null)
         {
             Console.WriteLine("Error: No .cs file found (or multiple available in the specified location).");
             return 1;
@@ -41,11 +41,11 @@ sealed class ConvertProjectAction(Argument<string[]> filesArgument, Option<strin
 
             finalOutputPath = outputPath;
         }
-        else if (sourcePath is not null)
+        else if (csSourcePath is not null)
         {
             // If -out was not provided, automatically generate the name.
-            var directory = Path.GetDirectoryName(sourcePath) ?? ".";
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(sourcePath);
+            var directory = Path.GetDirectoryName(csSourcePath) ?? ".";
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(csSourcePath);
             finalOutputPath = Path.Combine(directory, $"{fileNameWithoutExtension}_FileBased.cs");
         }
 
@@ -101,7 +101,7 @@ sealed class ConvertProjectAction(Argument<string[]> filesArgument, Option<strin
 
             WriteEmptyLineIf(projectInfo.UsingDirectives.Count > 0, writer);
 
-            var sourceContent = File.ReadAllText(sourcePath!);
+            var sourceContent = await File.ReadAllTextAsync(csSourcePath!, cancellationToken);
             writer.Write(sourceContent);
         }
         catch (Exception ex)

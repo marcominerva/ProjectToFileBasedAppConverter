@@ -19,47 +19,47 @@ public static class FileDiscovery
     /// <returns>
     /// A tuple containing:
     /// <list type="bullet">
-    /// <item><c>csprojPath</c>: The full path to the discovered .csproj file, or <see langword="null"/> if not found.</item>
-    /// <item><c>sourcePath</c>: The full path to the discovered .cs file, or <see langword="null"/> if not found.</item>
+    /// <item><c>CsprojPath</c>: The full path to the discovered .csproj file, or <see langword="null"/> if not found.</item>
+    /// <item><c>CsSourcePath</c>: The full path to the discovered .cs file, or <see langword="null"/> if not found.</item>
     /// </list>
     /// </returns>
     /// <remarks>
     /// When searching directories, the method only succeeds if exactly one .csproj file and exactly one .cs file are found in the specified directory.
     /// If multiple files of the same type are found, <see langword="null"/> is returned for that file type.
     /// </remarks>
-    public static (string? csprojPath, string? sourcePath) DiscoverFiles(string[]? args)
+    public static (string? CsprojPath, string? CsSourcePath) DiscoverFiles(string[]? args)
     {
         string? csprojPath = null;
-        string? sourcePath = null;
+        string? csSourcePath = null;
 
         if (args is null || args.Length == 0)
         {
             var currentDir = Directory.GetCurrentDirectory();
-            (csprojPath, sourcePath) = FindFilesInDirectory(currentDir);
+            (csprojPath, csSourcePath) = FindFilesInDirectory(currentDir);
         }
-        else if (args.Length == 1)
+        else if (args is [var arg])
         {
-            var arg = args[0];
-
             if (Directory.Exists(arg))
             {
-                (csprojPath, sourcePath) = FindFilesInDirectory(arg);
+                (csprojPath, csSourcePath) = FindFilesInDirectory(arg);
             }
             else if (File.Exists(arg))
             {
-                if (arg.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+                if (IsCsproj(arg))
                 {
+                    // If it's a .csproj file, find the .cs file in the same directory (if there is only one).
                     csprojPath = Path.GetFullPath(arg);
                     var directory = Path.GetDirectoryName(csprojPath);
                     if (directory is not null)
                     {
-                        sourcePath = FindCsFile(directory);
+                        csSourcePath = FindCsFile(directory);
                     }
                 }
-                else if (arg.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                else if (IsCsSource(arg))
                 {
-                    sourcePath = Path.GetFullPath(arg);
-                    var directory = Path.GetDirectoryName(sourcePath);
+                    // If it's a .cs file, find the .csproj file in the same directory (if there is only one).
+                    csSourcePath = Path.GetFullPath(arg);
+                    var directory = Path.GetDirectoryName(csSourcePath);
                     if (directory is not null)
                     {
                         csprojPath = FindCsprojFile(directory);
@@ -67,28 +67,21 @@ public static class FileDiscovery
                 }
             }
         }
-        else if (args.Length == 2)
+        else if (args is [var arg0, var arg1] && File.Exists(arg0) && File.Exists(arg1))
         {
-            foreach (var arg in args)
+            // If two file paths are provided, determine which is the .csproj and which is the .cs file (order-independent).
+            (csprojPath, csSourcePath) = (arg0, arg1) switch
             {
-                if (File.Exists(arg))
-                {
-                    if (arg.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
-                    {
-                        csprojPath = Path.GetFullPath(arg);
-                    }
-                    else if (arg.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
-                    {
-                        sourcePath = Path.GetFullPath(arg);
-                    }
-                }
-            }
+                var (a, b) when IsCsproj(a) && IsCsSource(b) => (Path.GetFullPath(a), Path.GetFullPath(b)),
+                var (a, b) when IsCsSource(a) && IsCsproj(b) => (Path.GetFullPath(b), Path.GetFullPath(a)),
+                _ => (null, null)
+            };
         }
 
-        return (csprojPath, sourcePath);
+        return (csprojPath, csSourcePath);
     }
 
-    private static (string? csprojPath, string? sourcePath) FindFilesInDirectory(string directory)
+    private static (string? CsprojPath, string? CsSourcePath) FindFilesInDirectory(string directory)
     {
         var csprojPath = FindCsprojFile(directory);
         var sourcePath = FindCsFile(directory);
@@ -106,4 +99,10 @@ public static class FileDiscovery
         var csFiles = Directory.GetFiles(directory, "*.cs");
         return csFiles.Length == 1 ? Path.GetFullPath(csFiles[0]) : null;
     }
+
+    private static bool IsCsproj(string path)
+        => Path.GetExtension(path).Equals(".csproj", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsCsSource(string path)
+        => Path.GetExtension(path).Equals(".cs", StringComparison.OrdinalIgnoreCase);
 }
