@@ -18,7 +18,7 @@
         <Description>A command-line tool that converts traditional C# projects into File-Based Apps, combining project configuration and source code into a single executable file.</Description>
         <PackageTags>dotnet-tool;csharp;file-based;converter;tool</PackageTags>
         <PackageProjectUrl>https://github.com/marcominerva/ProjectToFileBasedAppConverter</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/marcominerva/ProjectToFileBasedAppConverter</RepositoryUrl>
+        <RepositoryUrl>https://github.com/marcominerva/ProjectToFileBasedAppConverter.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
