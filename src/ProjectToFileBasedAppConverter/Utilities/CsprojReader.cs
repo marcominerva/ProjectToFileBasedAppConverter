@@ -6,7 +6,7 @@ namespace ProjectToFileBasedAppConverter.Utilities;
 /// <summary>
 /// Provides functionality to read and parse C# project files (.csproj) and extract project information.
 /// </summary>
-public sealed class CsprojReader
+internal sealed class CsprojReader
 {
     private readonly string csprojPath;
 

@@ -10,8 +10,8 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>filebased-convert</ToolCommandName>
-        <PackageId>FileBasedConverter</PackageId>
+        <ToolCommandName>filebasedappconverter</ToolCommandName>
+        <PackageId>FileBasedAppConverter</PackageId>
         <Authors>Marco Minerva</Authors>
         <Company>Marco Minerva</Company>
         <Title>File-Based App Converter Tool</Title>
@@ -32,11 +32,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nerdbank.GitVersioning" Version="3.9.50">
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.10.94">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.CommandLine" Version="2.0.3" />
+        <PackageReference Include="System.CommandLine" Version="2.0.11" />
     </ItemGroup>
 
 </Project>

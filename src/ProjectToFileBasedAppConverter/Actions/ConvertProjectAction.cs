@@ -18,24 +18,22 @@ internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Opt
 
         if (csprojPath is null)
         {
-            Console.WriteLine("Error: No .csproj file found (or multiple available in the specified location).");
+            Console.Error.WriteLine("Error: No .csproj file found (or multiple available in the specified location).");
             return 1;
         }
 
         if (csSourcePath is null)
         {
-            Console.WriteLine("Error: No .cs file found (or multiple available in the specified location).");
+            Console.Error.WriteLine("Error: No .cs file found (or multiple available in the specified location).");
             return 1;
         }
 
-        // Handle output file path.
         string? finalOutputPath = null;
         if (outputPath is not null)
         {
-            // If -out was provided, check if it already exists.
             if (File.Exists(outputPath))
             {
-                Console.WriteLine($"Error: Output file already exists: {outputPath}");
+                Console.Error.WriteLine($"Error: Output file already exists: {outputPath}");
                 return 1;
             }
 
@@ -43,14 +41,21 @@ internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Opt
         }
         else if (csSourcePath is not null)
         {
-            // If -out was not provided, automatically generate the name.
             var directory = Path.GetDirectoryName(csSourcePath) ?? ".";
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(csSourcePath);
-            finalOutputPath = Path.Combine(directory, $"{fileNameWithoutExtension}_FileBased.cs");
+            finalOutputPath = Path.Combine(directory, $"{fileNameWithoutExtension}_FileBasedApp.cs");
+
+            if (File.Exists(finalOutputPath))
+            {
+                Console.Error.WriteLine($"Error: Output file already exists: {finalOutputPath}");
+                return 1;
+            }
         }
 
         var reader = new CsprojReader(csprojPath);
         var projectInfo = reader.GetProjectInformation();
+        var csprojDirectory = Path.GetDirectoryName(Path.GetFullPath(csprojPath)) ?? Directory.GetCurrentDirectory();
+        var outputDirectory = Path.GetDirectoryName(Path.GetFullPath(finalOutputPath!)) ?? Directory.GetCurrentDirectory();
 
         // Write the file based app file.
         try
@@ -71,14 +76,19 @@ internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Opt
 
             foreach (var packageReference in projectInfo.PackageReferences)
             {
-                writer.WriteLine($"#:package {packageReference.Name}@{packageReference.Version}");
+                var packageDirective = string.IsNullOrWhiteSpace(packageReference.Version)
+                    ? packageReference.Name
+                    : $"{packageReference.Name}@{packageReference.Version}";
+
+                writer.WriteLine($"#:package {packageDirective}");
             }
 
             WriteEmptyLineIf(projectInfo.PackageReferences.Count > 0, writer);
 
             foreach (var projectReference in projectInfo.ProjectReferences)
             {
-                writer.WriteLine($"#:project {projectReference.Path}");
+                var projectReferencePath = GetProjectReferencePath(projectReference.Path, csprojDirectory, outputDirectory);
+                writer.WriteLine($"#:project {projectReferencePath}");
             }
 
             WriteEmptyLineIf(projectInfo.ProjectReferences.Count > 0, writer);
@@ -106,7 +116,7 @@ internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Opt
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error writing output file: {ex.Message}");
+            Console.Error.WriteLine($"Error writing output file: {ex.Message}");
             return 1;
         }
 
@@ -119,5 +129,11 @@ internal sealed class ConvertProjectAction(Argument<string[]> filesArgument, Opt
         {
             writer.WriteLine();
         }
+    }
+
+    private static string GetProjectReferencePath(string projectReferencePath, string csprojDirectory, string outputDirectory)
+    {
+        var fullProjectReferencePath = Path.GetFullPath(projectReferencePath, csprojDirectory);
+        return Path.GetRelativePath(outputDirectory, fullProjectReferencePath);
     }
 }
